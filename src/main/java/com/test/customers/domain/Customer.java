@@ -21,7 +21,7 @@ public class Customer {
     private Date createdDate;
 
     @Column(name = "account_owner")
-    private String accountOwner;
+    private Long accountOwner;
 
     public Long getId() {
         return id;
@@ -47,19 +47,19 @@ public class Customer {
         this.aggregatedRevenue = aggregatedRevenue;
     }
 
-    public String getAccountOwner() {
-        return accountOwner;
-    }
-
-    public void setAccountOwner(String accountOwner) {
-        this.accountOwner = accountOwner;
-    }
-
     public Date getCreatedDate() {
         return createdDate;
     }
 
     public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
+    }
+
+    public Long getAccountOwner() {
+        return accountOwner;
+    }
+
+    public void setAccountOwner(Long accountOwner) {
+        this.accountOwner = accountOwner;
     }
 }

@@ -7,7 +7,7 @@ public class CreateOrUpdateCustomerRequest {
 
     private String name;
 
-    private String accountOwner;
+    private Long accountOwner;
 
     public String getName() {
         return name;
@@ -17,11 +17,11 @@ public class CreateOrUpdateCustomerRequest {
         this.name = name;
     }
 
-    public String getAccountOwner() {
+    public Long getAccountOwner() {
         return accountOwner;
     }
 
-    public void setAccountOwner(String accountOwner) {
+    public void setAccountOwner(Long accountOwner) {
         this.accountOwner = accountOwner;
     }
 

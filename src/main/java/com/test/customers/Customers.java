@@ -3,14 +3,17 @@ package com.test.customers;
 import com.test.customers.domain.Account;
 import com.test.customers.domain.CreateOrUpdateCustomerRequest;
 import com.test.customers.domain.Customer;
+import com.test.customers.domain.CustomerWrapper;
 import com.test.customers.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
@@ -34,6 +37,16 @@ public class Customers {
         return customerRepository.findById(id).orElse(null);
     }
 
+    @ResponseStatus(OK)
+    @RequestMapping(value = "/customer/user/{user}", method = GET)
+    public CustomerWrapper customersByUser(@PathVariable("user") String user) {
+        List<Long> accountsForUser = accountsService.getAccountsForUser(user).stream().map(Account::getId).collect(toList());
+        List<Customer> customers = customerRepository.findByAccountOwnerIn(Collections.unmodifiableList(accountsForUser));
+        CustomerWrapper customerWrapper = new CustomerWrapper();
+        customerWrapper.setCustomers(customers);
+        return customerWrapper;
+    }
+
     @ResponseStatus(CREATED)
     @RequestMapping(value = "/customer", method = POST)
     public Customer createCustomer(@RequestBody CreateOrUpdateCustomerRequest createOrUpdateCustomerRequest) {
@@ -52,7 +65,7 @@ public class Customers {
         optionalCustomer.map(customer -> {
             List<Account> accountsForUser = accountsService.getAccountsForUser(user);
             return accountsForUser.stream()
-                    .filter(account -> account.getOwnedBy().equalsIgnoreCase(customer.getAccountOwner()))
+                    .filter(account -> account.getId().equals(customer.getAccountOwner()))
                     .findFirst().orElse(null);
         }).ifPresent(account -> customerRepository.deleteById(id));
     }
@@ -65,10 +78,9 @@ public class Customers {
         return customerRepository.findById(id).map(customer -> {
                     List<Account> accountsForUser = accountsService.getAccountsForUser(user);
                     return accountsForUser.stream()
-                            .filter(account -> account.getOwnedBy().equalsIgnoreCase(customer.getAccountOwner()))
+                            .filter(account -> account.getId().equals(customer.getAccountOwner()))
                             .findFirst().map(account -> {
                                 customer.setName(createOrUpdateCustomerRequest.getName());
-                                customer.setAccountOwner(createOrUpdateCustomerRequest.getAccountOwner());
                                 return customerRepository.save(customer);
                             }).orElse(null);
                 }

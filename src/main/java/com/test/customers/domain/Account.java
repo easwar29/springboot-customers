@@ -5,13 +5,13 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Account {
 
-    private String ownedBy;
+    private Long id;
 
-    public String getOwnedBy() {
-        return ownedBy;
+    public Long getId() {
+        return id;
     }
 
-    public void setOwnedBy(String ownedBy) {
-        this.ownedBy = ownedBy;
+    public void setId(Long id) {
+        this.id = id;
     }
 }
